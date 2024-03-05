@@ -1,5 +1,3 @@
-local Path = require 'plenary.path'
-local Window = require 'plenary.window.float'
 local strings = require 'plenary.strings'
 local pickers = require 'telescope.pickers'
 local finders = require 'telescope.finders'
@@ -73,7 +71,7 @@ local delete_worktree = function(prompt_bufnr)
     return
   end
 
-  local worktree_path = get_worktree_path(prompt_bufnr)
+  local worktree_path = get_worktree_path()
   actions.close(prompt_bufnr)
   if worktree_path ~= nil then
     git_worktree.delete_worktree(worktree_path, force_next_deletion, {

@@ -4,6 +4,7 @@ local Enum = function(tbl)
       error(string.format('%s does not exist for this enum.', key))
     end,
 
+    ---@diagnostic disable-next-line: unused-local
     __newindex = function(t, key, value)
       error 'Enums are immutable. You are not able to set new values'
     end,
