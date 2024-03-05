@@ -10,6 +10,12 @@ local git_worktree_root = nil
 local current_worktree_path = nil
 local on_change_callbacks = {}
 
+-- NOTE: the plenary.path method doesn't work properly on windows with POSIX paths.
+-- telescope returns POSIX path (my custom utils also deal with all path as POSIX)
+local function is_absolute_path(pth)
+  return string.match(pth, '^[/\\]') ~= nil or string.match(pth, '^[A-Za-z]:[/\\]') ~= nil
+end
+
 M.setup_git_info = function()
   local cwd = vim.loop.cwd()
 
@@ -164,7 +170,7 @@ local function change_dirs(path)
     vim.cmd(cmd)
     current_worktree_path = worktree_path
   else
-    status:error('Could not chang to directory: ' .. worktree_path)
+    status:error('Could not change to directory: ' .. worktree_path)
   end
 
   if M._config.clearjumps_on_change then
@@ -215,9 +221,8 @@ local function has_worktree(path, cb)
       end
 
       data = list_data[1]
-
       local start
-      if plenary_path:is_absolute() then
+      if is_absolute_path(path) then
         start = data == path
       else
         local worktree_path = Path:new(string.format('%s' .. Path.path.sep .. '%s', git_worktree_root, path))
@@ -305,7 +310,7 @@ local function create_worktree(path, branch, upstream, found_branch)
   local create = create_worktree_job(path, branch, found_branch)
 
   local worktree_path
-  if Path:new(path):is_absolute() then
+  if is_absolute(path) then
     worktree_path = path
   else
     worktree_path = Path:new(git_worktree_root, path):absolute()
@@ -536,7 +541,7 @@ M.get_current_worktree_path = function()
 end
 
 M.get_worktree_path = function(path)
-  if Path:new(path):is_absolute() then
+  if is_absolute_path(path) then
     return path
   else
     return Path:new(git_worktree_root, path):absolute()
