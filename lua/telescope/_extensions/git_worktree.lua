@@ -12,13 +12,13 @@ local git_worktree = require 'git-worktree'
 
 local force_next_deletion = false
 
-local get_worktree_path = function(prompt_bufnr)
-  local selection = action_state.get_selected_entry(prompt_bufnr)
+local get_worktree_path = function()
+  local selection = action_state.get_selected_entry()
   return selection.path
 end
 
 local switch_worktree = function(prompt_bufnr)
-  local worktree_path = get_worktree_path(prompt_bufnr)
+  local worktree_path = get_worktree_path()
   actions.close(prompt_bufnr)
   if worktree_path ~= nil then
     git_worktree.switch_worktree(worktree_path)
